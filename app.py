@@ -12,35 +12,55 @@ st.title("🎥 All-in-One AI Script & Voice")
 choice = st.sidebar.selectbox("လုပ်ဆောင်ချက် ရွေးချယ်ပါ", ["Video to Script", "Text to Voice"])
 
 if choice == "Video to Script":
-    st.header("📜 Video to Script (YT, FB, TikTok, Rednote)")
+    st.header("📜 Video to Script (Any Platform)")
     video_url = st.text_input("Video Link ထည့်ပါ:")
-    # Language code တွေကို deep-translator နဲ့ ကိုက်အောင် ပြင်ထားပါတယ်
     lang_map = {"မြန်မာ": "my", "English": "en", "Thai": "th", "Japanese": "ja", "Chinese": "zh-CN"}
     target_lang = st.selectbox("ဘာသာပြန်ရန်", list(lang_map.keys()))
     
     if st.button("Script ထုတ်မည်"):
         if video_url:
-            with st.spinner("အလုပ်လုပ်နေပါသည်..."):
+            with st.spinner("Processing... ခဏစောင့်ပါ (Video အတိုဆိုလျှင် ပိုမြန်ပါသည်)"):
                 try:
-                    # Audio ဆွဲထုတ်ခြင်း
-                    ydl_opts = {'format': 'bestaudio/best', 'outtmpl': 'audio.mp3', 'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3'}]}
+                    # ၁။ Audio ဆွဲထုတ်ခြင်း (Error 403 ကျော်ရန် Settings များ)
+                    ydl_opts = {
+                        'format': 'bestaudio/best',
+                        'outtmpl': 'downloaded_audio.%(ext)s',
+                        'noplaylist': True,
+                        'quiet': True,
+                        'nocheckcertificate': True,
+                        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'postprocessors': [{
+                            'key': 'FFmpegExtractAudio',
+                            'preferredcodec': 'mp3',
+                            'preferredquality': '192',
+                        }],
+                    }
+                    
+                    if os.path.exists("downloaded_audio.mp3"):
+                        os.remove("downloaded_audio.mp3")
+
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                         ydl.download([video_url])
                     
-                    # AI စာသားပြောင်းခြင်း
-                    model = whisper.load_model("base")
-                    result = model.transcribe("audio.mp3")
+                    # ၂။ AI စာသားပြောင်းခြင်း (Tiny model သုံးထား၍ ပိုမြန်ပါမည်)
+                    model = whisper.load_model("tiny") 
+                    result = model.transcribe("downloaded_audio.mp3")
                     
-                    # ဘာသာပြန်ခြင်း (Deep Translator သုံးထားပါတယ်)
+                    # ၃။ ဘာသာပြန်ခြင်း
                     translated = GoogleTranslator(source='auto', target=lang_map[target_lang]).translate(result['text'])
                     
                     st.success("အောင်မြင်သည်!")
                     st.subheader("ဘာသာပြန်ထားသော စာသား:")
                     st.write(translated)
+                    
+                    # Cleanup
+                    if os.path.exists("downloaded_audio.mp3"):
+                        os.remove("downloaded_audio.mp3")
+                        
                 except Exception as e:
-                    st.error(f"Error: {str(e)}")
+                    st.error(f"Error တက်ရခြင်း အကြောင်းရင်း: {str(e)}")
         else:
-            st.warning("Link ထည့်ပါ")
+            st.warning("Link တစ်ခုခု ထည့်ပေးပါ")
 
 elif choice == "Text to Voice":
     st.header("🎙 Text to Voice")
