@@ -6,100 +6,126 @@ import asyncio
 from edge_tts import Communicate
 import os
 
-# --- Page Config & Styling ---
-st.set_page_config(page_title="Tech_T AI", page_icon="🤖", layout="wide")
+# --- 🎨 ADVANCED UI/UX DESIGN ---
+st.set_page_config(page_title="Tech_T AI Premium", page_icon="⚡", layout="centered")
 
-# Logo နှင့် နာမည်ကို လှလှပပ ပြုလုပ်ခြင်း
 st.markdown("""
-    <div style="text-align: center;">
-        <h1 style="color: #FF4B4B;">🤖 Tech_T AI Tool</h1>
-        <p style="font-size: 20px; font-weight: bold;">Developed By Tarbin</p>
-        <hr>
+    <style>
+    .main { background-color: #0e1117; }
+    .stButton>button {
+        width: 100%;
+        border-radius: 10px;
+        height: 3em;
+        background-color: #FF4B4B;
+        color: white;
+        font-weight: bold;
+        border: none;
+    }
+    .stTextInput>div>div>input { border-radius: 10px; }
+    .dev-card {
+        background: linear-gradient(45deg, #1f2129, #2d2f39);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid #3e4149;
+        margin-bottom: 25px;
+    }
+    </style>
+    <div class="dev-card">
+        <h1 style="color: #FF4B4B; margin-bottom: 0;">🚀 Tech_T AI v2.0</h1>
+        <p style="color: #9ea0a9;">Elite Transcription & Voice Synthesis</p>
+        <p style="background: #FF4B4B; display: inline-block; padding: 2px 10px; border-radius: 5px; font-size: 12px;">Developed By Tarbin</p>
     </div>
     """, unsafe_allow_html=True)
 
-# Sidebar Menu
-st.sidebar.markdown("### 🛠 Main Menu")
-choice = st.sidebar.radio("ဘယ်အမျိုးအစား သုံးမလဲ?", ["Video to Script", "Text to Voice"])
+# --- SIDEBAR ---
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/4712/4712035.png", width=100)
+    st.title("Settings")
+    mode = st.selectbox("Feature ရွေးချယ်ပါ", ["🎬 Video To Script", "🎙 AI Voice Gen"])
+    st.divider()
+    st.caption("Status: Server Online 🟢")
 
-# --- ၁။ Video to Script ပိုင်း (Error ပြင်ဆင်ပြီး) ---
-if choice == "Video to Script":
-    st.header("📜 Video to Script (Global Support)")
-    st.info("YouTube, FB, TikTok နှင့် Rednote လင့်များ ထည့်နိုင်သည်")
+# --- FEATURE 1: VIDEO TO SCRIPT ---
+if mode == "🎬 Video To Script":
+    st.subheader("Extract Script from Video")
     
-    video_url = st.text_input("Video Link ကို ဒီမှာ ထည့်ပါ:")
+    # YouTube က block တာကျော်ဖို့ Option နှစ်ခုပေးထားပါတယ်
+    input_type = st.radio("အသုံးပြုမည့်နည်းလမ်း:", ["Video Link", "Upload Video File (ပိုစိတ်ချရသည်)"])
+    
     lang_map = {"မြန်မာ": "my", "English": "en", "Thai": "th", "Japanese": "ja", "Chinese": "zh-CN"}
-    target_lang = st.selectbox("ဘာသာပြန်ရန် ရွေးပါ", list(lang_map.keys()))
-    
-    if st.button("Script ထုတ်မည် ✨"):
-        if video_url:
-            with st.spinner("AI က အလုပ်လုပ်နေပါပြီ၊ ခဏစောင့်ပေးပါ..."):
+    target_lang = st.selectbox("ဘာသာပြန်ရန် ဘာသာစကား ရွေးပါ", list(lang_map.keys()))
+
+    source = None
+    if input_type == "Video Link":
+        source = st.text_input("YouTube / FB / TikTok Link ထည့်ပါ")
+    else:
+        source = st.file_uploader("ဗီဒီယိုဖိုင် ရွေးပါ", type=["mp4", "mkv", "mov", "avi"])
+
+    if st.button("Start AI Process ✨"):
+        if source:
+            with st.status("AI က လုပ်ဆောင်နေပါပြီ...", expanded=True) as status:
                 try:
-                    # Audio Download ဆွဲခြင်း (403 Forbidden Error ကျော်ရန်)
-                    ydl_opts = {
-                        'format': 'bestaudio/best',
-                        'outtmpl': 'temp_audio.%(ext)s',
-                        'quiet': True,
-                        'no_warnings': True,
-                        'nocheckcertificate': True,
-                        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                        'referer': 'https://www.google.com/',
-                        'postprocessors': [{
-                            'key': 'FFmpegExtractAudio',
-                            'preferredcodec': 'mp3',
-                            'preferredquality': '192',
-                        }],
-                    }
-
-                    # ဖိုင်ဟောင်းရှိရင် ဖျက်မယ်
-                    if os.path.exists("temp_audio.mp3"):
-                        os.remove("temp_audio.mp3")
-
-                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                        ydl.download([video_url])
+                    audio_path = "processed_audio.mp3"
                     
-                    # AI စာသားပြောင်းခြင်း
+                    if input_type == "Video Link":
+                        st.write("🌐 ဗီဒီယိုမှ အသံဖိုင်ကို ဒေါင်းလုဒ်ဆွဲနေသည်...")
+                        ydl_opts = {
+                            'format': 'bestaudio/best',
+                            'outtmpl': 'temp_v',
+                            'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192'}],
+                            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36'
+                        }
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                            ydl.download([source])
+                        os.rename("temp_v.mp3", audio_path)
+                    else:
+                        st.write("📁 ဖိုင်မှ အသံကို ထုတ်ယူနေသည်...")
+                        with open("temp_file.mp4", "wb") as f:
+                            f.write(source.getbuffer())
+                        os.system(f'ffmpeg -i temp_file.mp4 -vn -ar 44100 -ac 2 -b:a 192k {audio_path} -y')
+
+                    st.write("🧠 AI စနစ်ဖြင့် စာသားပြောင်းနေသည် (Whisper)...")
                     model = whisper.load_model("tiny")
-                    result = model.transcribe("temp_audio.mp3")
+                    result = model.transcribe(audio_path)
                     
-                    # ဘာသာပြန်ခြင်း
+                    st.write("📝 ဘာသာပြန်ဆိုနေသည်...")
                     translated = GoogleTranslator(source='auto', target=lang_map[target_lang]).translate(result['text'])
                     
-                    st.success("အောင်မြင်စွာ ပြီးဆုံးပါပြီ!")
+                    status.update(label="Process ပြီးဆုံးပါပြီ!", state="complete", expanded=False)
                     
-                    # ရလဒ်ပြသခြင်း
-                    t1, t2 = st.tabs(["ဘာသာပြန်ထားသော စာသား", "မူရင်း စာသား"])
-                    with t1:
-                        st.text_area("ဘာသာပြန် script", translated, height=300)
-                    with t2:
-                        st.text_area("Original script", result['text'], height=300)
+                    st.success("✅ Script ထွက်လာပါပြီ")
+                    tab1, tab2 = st.tabs(["ဘာသာပြန်", "မူရင်း"])
+                    tab1.text_area("Translated", translated, height=250)
+                    tab2.text_area("Original", result['text'], height=250)
                     
-                    # Cleanup
-                    os.remove("temp_audio.mp3")
-                        
+                    # Clean up
+                    if os.path.exists(audio_path): os.remove(audio_path)
+                    if os.path.exists("temp_file.mp4"): os.remove("temp_file.mp4")
+
                 except Exception as e:
-                    st.error(f"⚠️ Error: YouTube က ပိတ်ထားဆဲ ဖြစ်နိုင်သည်။ (Error Detail: {str(e)})")
+                    st.error(f"Error: YouTube မှ ဒေါင်းလုဒ်ဆွဲ၍မရပါ။ (Cloud Server Block ဖြစ်နေခြင်း)\nအကြံပြုချက်: ဗီဒီယိုကို ဖုန်းထဲဒေါင်းပြီး 'Upload File' စနစ်ဖြင့် သုံးပေးပါ။")
         else:
-            st.warning("လင့်တစ်ခုခု အရင်ထည့်ပေးပါဗျာ။")
+            st.warning("Input တစ်ခုခု ထည့်ပေးပါ။")
 
-# --- ၂။ Text to Voice ပိုင်း ---
-elif choice == "Text to Voice":
-    st.header("🎙 Professional Text-to-Voice")
-    input_txt = st.text_area("အသံပြောင်းလိုသော စာသားများ ရေးပါ:", height=200)
+# --- FEATURE 2: AI VOICE GEN ---
+elif mode == "🎙 AI Voice Gen":
+    st.subheader("Professional AI Voiceover")
+    txt = st.text_area("စာသားများ ရိုက်ထည့်ပါ", placeholder="မင်္ဂလာပါ... Tech_T မှ ကြိုဆိုပါတယ်")
     
-    v_map = {
-        "မြန်မာ (အမျိုးသား)": "my-MM-ThihaNeural",
-        "English (Male)": "en-US-ChristopherNeural",
-        "Thai (Female)": "th-TH-AcharaNeural"
-    }
-    v_choice = st.selectbox("အသံပုံစံ ရွေးပါ", list(v_map.keys()))
+    col1, col2 = st.columns(2)
+    with col1:
+        gender = st.selectbox("Gender", ["Male", "Female"])
+    with col2:
+        speed = st.slider("Speed", 0.5, 2.0, 1.0)
 
-    if st.button("အသံထုတ်မည် 🎧"):
-        if input_txt:
-            async def generate():
-                comm = Communicate(input_txt, v_map[v_choice])
-                await comm.save("voice_output.mp3")
-                st.audio("voice_output.mp3")
-            asyncio.run(generate())
+    if st.button("Generate Audio 🎧"):
+        if txt:
+            v_code = "my-MM-ThihaNeural" if gender == "Male" else "my-MM-NilarNeural"
+            async def run_tts():
+                comm = Communicate(txt, v_code)
+                await comm.save("output.mp3")
+            asyncio.run(run_tts())
+            st.audio("output.mp3")
         else:
-            st.warning("စာသား အရင်ရိုက်ပါ")
+            st.warning("စာသား အရင်ရေးပါ")
