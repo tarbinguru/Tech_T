@@ -1,7 +1,7 @@
 import streamlit as st
 import yt_dlp
 import whisper
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 import asyncio
 from edge_tts import Communicate
 import os
@@ -14,19 +14,33 @@ choice = st.sidebar.selectbox("လုပ်ဆောင်ချက် ရွေ
 if choice == "Video to Script":
     st.header("📜 Video to Script (YT, FB, TikTok, Rednote)")
     video_url = st.text_input("Video Link ထည့်ပါ:")
-    lang = st.selectbox("ဘာသာပြန်ရန်", ["my", "en", "th", "ja", "zh-cn"])
+    # Language code တွေကို deep-translator နဲ့ ကိုက်အောင် ပြင်ထားပါတယ်
+    lang_map = {"မြန်မာ": "my", "English": "en", "Thai": "th", "Japanese": "ja", "Chinese": "zh-CN"}
+    target_lang = st.selectbox("ဘာသာပြန်ရန်", list(lang_map.keys()))
     
     if st.button("Script ထုတ်မည်"):
-        with st.spinner("အလုပ်လုပ်နေပါသည်..."):
-            ydl_opts = {'format': 'bestaudio/best', 'outtmpl': 'audio.mp3', 'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3'}]}
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([video_url])
-            model = whisper.load_model("base")
-            result = model.transcribe("audio.mp3")
-            ts = Translator()
-            translated = ts.translate(result['text'], dest=lang)
-            st.subheader("ဘာသာပြန်ထားသော စာသား:")
-            st.write(translated.text)
+        if video_url:
+            with st.spinner("အလုပ်လုပ်နေပါသည်..."):
+                try:
+                    # Audio ဆွဲထုတ်ခြင်း
+                    ydl_opts = {'format': 'bestaudio/best', 'outtmpl': 'audio.mp3', 'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3'}]}
+                    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([video_url])
+                    
+                    # AI စာသားပြောင်းခြင်း
+                    model = whisper.load_model("base")
+                    result = model.transcribe("audio.mp3")
+                    
+                    # ဘာသာပြန်ခြင်း (Deep Translator သုံးထားပါတယ်)
+                    translated = GoogleTranslator(source='auto', target=lang_map[target_lang]).translate(result['text'])
+                    
+                    st.success("အောင်မြင်သည်!")
+                    st.subheader("ဘာသာပြန်ထားသော စာသား:")
+                    st.write(translated)
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+        else:
+            st.warning("Link ထည့်ပါ")
 
 elif choice == "Text to Voice":
     st.header("🎙 Text to Voice")
@@ -38,4 +52,3 @@ elif choice == "Text to Voice":
             await c.save("out.mp3")
             st.audio("out.mp3")
         asyncio.run(make_voice())
-
