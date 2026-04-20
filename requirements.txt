@@ -3,3 +3,4 @@ yt-dlp
 openai-whisper
 deep-translator
 edge-tts
+pytube
