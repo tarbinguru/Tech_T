@@ -6,162 +6,187 @@ import asyncio
 from edge_tts import Communicate
 import os
 
-# --- 💡 PROFESSIONAL LIGHT UI CONFIG ---
-st.set_page_config(page_title="TECH_T | AI", page_icon="⚡", layout="wide")
+# --- 🎭 NEXTGEN PREMIUM UI CONFIG ---
+st.set_page_config(page_title="TECH_T | NEXTGEN AI", page_icon="🔮", layout="wide")
 
+# Custom CSS for NextGen Glassmorphism Design
 st.markdown("""
     <style>
-    /* Light Mode Professional Background */
-    .stApp { background-color: #F8F9FA; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
     
-    /* Header Container */
-    .main-header {
-        text-align: center;
-        padding: 40px;
-        background: #FFFFFF;
-        border-radius: 0 0 30px 30px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    .stApp {
+        background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 100%);
+        font-family: 'Inter', sans-serif;
+        color: #f8fafc;
+    }
+
+    /* Professional Card Container */
+    .app-container {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 35px;
+        margin-top: 20px;
+    }
+
+    /* Branding Section */
+    .branding-box {
+        text-align: left;
         margin-bottom: 30px;
+        border-left: 4px solid #6366f1;
+        padding-left: 20px;
     }
-    
-    .app-title {
-        font-size: 55px; font-weight: 800;
-        color: #1A73E8; /* Premium Blue */
-        margin-bottom: 5px;
-        letter-spacing: -1px;
+    .main-title {
+        font-size: 32px; font-weight: 800;
+        background: linear-gradient(90deg, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    
-    .dev-label {
-        color: #5F6368; font-size: 13px; font-weight: 600;
-        text-transform: uppercase; letter-spacing: 4px;
-    }
+    .sub-title { color: #94a3b8; font-size: 14px; letter-spacing: 1px; }
 
-    /* Cards & Tabs */
-    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
-    .stTabs [data-baseweb="tab"] {
-        background: #FFFFFF !important;
-        border: 1px solid #E0E0E0 !important;
+    /* Input/Box Styling */
+    div[data-baseweb="select"] > div, .stTextArea textarea, .stTextInput input {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 12px !important;
-        color: #3C4043 !important;
-        padding: 10px 25px !important;
-        font-weight: 600;
-    }
-    .stTabs [aria-selected="true"] {
-        background: #1A73E8 !important;
         color: white !important;
-        border: none !important;
     }
 
-    /* Input Styling for Visibility */
-    .stTextInput input, .stTextArea textarea, .stSelectbox div {
-        background: #FFFFFF !important;
-        color: #202124 !important;
-        border: 1px solid #DADCE0 !important;
-        border-radius: 10px !important;
-    }
-    
-    /* Professional Action Button */
+    /* Premium Button */
     .stButton>button {
-        background: #1A73E8 !important;
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
         color: white !important;
-        border-radius: 12px !important;
-        height: 55px !important;
-        font-size: 18px !important;
-        font-weight: 700 !important;
-        width: 100%;
         border: none !important;
-        box-shadow: 0 4px 10px rgba(26, 115, 232, 0.2);
+        border-radius: 12px !important;
+        height: 50px !important;
+        font-weight: 600 !important;
+        transition: 0.3s;
+        width: 100%;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+    }
+    
+    /* Sidebar/Drawer Style */
+    [data-testid="stSidebar"] {
+        background-color: rgba(15, 23, 42, 0.9);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
     }
     </style>
     
-    <div class="main-header">
-        <h1 class="app-title">TECH_T</h1>
-        <p class="dev-label">Developed By Tarbin</p>
+    <div class="branding-box">
+        <h1 class="main-title">NEXTGEN TECH_T</h1>
+        <p class="sub-title">STUDIO-GRADE AI ENGINE | DEVELOPED BY TARBIN</p>
     </div>
     """, unsafe_allow_html=True)
 
 # --- NAVIGATION ---
-tab1, tab2 = st.tabs(["🎥 TRANSCRIPT AI", "🎙️ ADVANCED VOICE ENGINE"])
+tab1, tab2 = st.tabs(["🎥 TRANSCRIPT AI", "🎙️ PREMIUM VOICE TTS"])
 
-# --- TAB 1: SCRIPT GEN ---
+# --- TAB 1: TRANSCRIPT ENGINE ---
 with tab1:
-    st.markdown("<br>", unsafe_allow_html=True)
-    c1, c2 = st.columns([2, 1])
-    with c1:
-        v_url = st.text_input("🔗 Video Link (YouTube, TikTok, FB, etc.)", placeholder="Paste URL...")
-        up_file = st.file_uploader("📁 Or Upload Video (၁၀၀% စိတ်ချရသည်)", type=['mp4', 'mov'])
-    with c2:
-        out_l = st.selectbox("Output Language", ["မြန်မာ", "English", "Thai"])
-        st.info("💡 Link မရလျှင် ဗီဒီယိုတင်ပေးပါ။")
+    with st.container():
+        st.markdown('<div class="app-container">', unsafe_allow_html=True)
+        col1, col2 = st.columns([2, 1])
+        
+        with col1:
+            v_url = st.text_input("Video Link Input (YouTube, FB, TikTok, Rednote)", placeholder="Paste link here...")
+            up_file = st.file_uploader("Or Upload Media File", type=['mp4', 'mov', 'mp3'])
+        
+        with col2:
+            out_lang = st.selectbox("Output Translation", ["Burmese (မြန်မာ)", "English (US)", "Thai"])
+            accuracy = st.select_slider("AI Precision", options=["Lite (Fast)", "Standard", "Pro (Deep)"])
 
-    if st.button("RUN ENGINE"):
-        if v_url or up_file:
-            with st.spinner("AI Processing..."):
-                try:
-                    aud = "t_audio.mp3"
-                    if up_file:
-                        with open("tmp.mp4", "wb") as f: f.write(up_file.getbuffer())
-                        os.system(f'ffmpeg -i tmp.mp4 -vn -ar 44100 -ac 2 -b:a 192k {aud} -y')
-                    else:
-                        ydl_opts = {'format': 'bestaudio/best', 'outtmpl': 'tmp', 'quiet': True,
-                                    'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3'}]}
-                        with yt_dlp.YoutubeDL(ydl_opts) as ydl: ydl.download([v_url])
-                        os.rename("tmp.mp3", aud)
-                    
-                    model = whisper.load_model("tiny")
-                    res = model.transcribe(aud)
-                    trans = GoogleTranslator(source='auto', target='my' if out_l=="မြန်မာ" else "en").translate(res['text'])
-                    st.success("ပြီးဆုံးပါပြီ")
-                    st.text_area("Result", trans, height=350)
-                except Exception as e:
-                    st.error("လင့်ပိတ်ထားပါသည်။ ဗီဒီယိုဖိုင်တင်ပေးပါ။")
+        if st.button("EXECUTE AI PROCESSING ✨"):
+            if v_url or up_file:
+                with st.status("Initializing NextGen AI Model...", expanded=True) as status:
+                    try:
+                        aud_path = "tech_t_core.mp3"
+                        if up_file:
+                            status.write("📂 Loading Local File...")
+                            with open("temp_media", "wb") as f: f.write(up_file.getbuffer())
+                            os.system(f'ffmpeg -i temp_media -vn -ar 44100 -ac 2 -b:a 192k {aud_path} -y')
+                        else:
+                            status.write("🌐 Fetching Remote Data...")
+                            ydl_opts = {
+                                'format': 'bestaudio/best', 'outtmpl': 'temp', 'quiet': True,
+                                'nocheckcertificate': True,
+                                'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3'}]
+                            }
+                            with yt_dlp.YoutubeDL(ydl_opts) as ydl: ydl.download([v_url])
+                            os.rename("temp.mp3", aud_path)
 
-# --- TAB 2: ADVANCED VOICE (MULTIPLE STYLES) ---
+                        status.write("🧠 Whisper Model Transcribing...")
+                        model_type = "tiny" if "Lite" in accuracy else "base"
+                        model = whisper.load_model(model_type)
+                        result = model.transcribe(aud_path)
+                        
+                        status.write("🌍 Global Translation Engine Active...")
+                        t_code = "my" if "Burmese" in out_lang else "en"
+                        final_text = GoogleTranslator(source='auto', target=t_code).translate(result['text'])
+                        
+                        status.update(label="Process Complete ✅", state="complete")
+                        st.subheader("Final Output")
+                        st.text_area("Resulting Script", final_text, height=300)
+                    except Exception as e:
+                        st.error("Error: Server block ကြောင့် Link မရပါ။ Video ကို Download ဆွဲပြီး 'Upload' လုပ်ပေးပါ။")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# --- TAB 2: PREMIUM VOICE ENGINE ---
 with tab2:
-    st.markdown("<br>", unsafe_allow_html=True)
-    v_txt = st.text_area("အသံပြောင်းရန် စာသားများရိုက်ထည့်ပါ", height=150, placeholder="ဒီမှာ ရေးပါ...")
-    
-    col_a, col_b = st.columns(2)
-    with col_a:
-        # အမျိုးမျိုးသော အသံပုံစံများကို ရွေးချယ်နိုင်ရန် စီစဉ်ထားသည်
-        v_style = st.selectbox("အသံပုံစံ ရွေးချယ်ပါ (Voice Style)", [
-            "အမျိုးသား - ပုံမှန် (Thiha)", 
-            "အမျိုးသမီး - ပုံမှန် (Nilar)",
-            "အမျိုးသား - Story ပြောရန် (Narrator)", 
-            "အမျိုးသမီး - Story ပြောရန် (Narrator)",
-            "ခြောက်ခြားဖွယ်/ထူးခြားအသံ (Deep Echo)"
-        ])
-    
-    with col_b:
-        v_speed = st.select_slider("အသံအမြန်နှုန်း (Speed)", options=["0.8x", "1.0x (Normal)", "1.2x", "1.5x"], value="1.0x (Normal)")
+    with st.container():
+        st.markdown('<div class="app-container">', unsafe_allow_html=True)
+        
+        # Text Input (No Limit)
+        v_input = st.text_area("Script Input (Burmese Supported - No Word Limit)", height=200, placeholder="ဒီမှာ စာသားများကို ကန့်သတ်ချက်မရှိ ရိုက်ထည့်နိုင်သည်...")
+        
+        st.divider()
+        
+        c_v1, c_v2, c_v3 = st.columns(3)
+        with c_v1:
+            st.markdown("### 🧬 AI Voice Model")
+            v_model = st.radio("Select Persona", 
+                ["Thiha (Male - Pro)", "Nilar (Female - Pro)", "Narrator (Storytelling)", "Horror/Deep (Echo)"],
+                index=0)
+        
+        with c_v2:
+            st.markdown("### 🎭 Emotional Delivery")
+            v_emotion = st.selectbox("Tone Style", ["Natural", "Energetic", "Calm/Serious", "Storytelling", "Spooky"])
+        
+        with c_v3:
+            st.markdown("### ⚙️ Audio Tuning")
+            v_speed = st.slider("Speech Rate", 0.5, 2.0, 1.0)
+            v_pitch = st.slider("Voice Pitch", -20, 20, 0)
 
-    if st.button("GENERATE AI VOICE 🎧"):
-        if v_txt:
-            async def generate_voice():
-                # အသံပုံစံအလိုက် Code များ သတ်မှတ်ခြင်း
-                styles = {
-                    "အမျိုးသား - ပုံမှန် (Thiha)": "my-MM-ThihaNeural",
-                    "အမျိုးသမီး - ပုံမှန် (Nilar)": "my-MM-NilarNeural",
-                    "အမျိုးသား - Story ပြောရန် (Narrator)": "en-US-ChristopherNeural", # မြန်မာစာဆိုလျှင် Thiha ပဲ သုံးရမည် (Engine ကန့်သတ်ချက်အရ)
-                    "အမျိုးသမီး - Story ပြောရန် (Narrator)": "en-US-JennyNeural",
-                    "ခြောက်ခြားဖွယ်/ထူးခြားအသံ (Deep Echo)": "my-MM-ThihaNeural"
-                }
-                v_code = styles[v_style]
-                
-                # Speed ချိန်ညှိခြင်း
-                rate = "+0%"
-                if "0.8x" in v_speed: rate = "-20%"
-                elif "1.2x" in v_speed: rate = "+20%"
-                elif "1.5x" in v_speed: rate = "+50%"
-                
-                # ခြောက်ခြားဖွယ်အတွက် Pitch ကို လျှော့ချခြင်း
-                pch = "-0Hz"
-                if "ခြောက်ခြားဖွယ်" in v_style: pch = "-25Hz"
+        if st.button("GENERATE PREMIUM VOICE 🎧"):
+            if v_input:
+                async def build_voice():
+                    # Voice Mapping
+                    v_code = "my-MM-ThihaNeural"
+                    if "Nilar" in v_model: v_code = "my-MM-NilarNeural"
+                    elif "Narrator" in v_model: v_code = "en-US-ChristopherNeural"
+                    
+                    # Pitch/Speed Logic
+                    rate_str = f"{'+' if v_speed>=1 else ''}{(v_speed-1)*100:.0f}%"
+                    pitch_str = f"{'+' if v_pitch>=0 else ''}{v_pitch}Hz"
+                    
+                    # Spooky Effect
+                    if "Horror" in v_model or "Spooky" in v_emotion:
+                        pitch_str = "-15Hz"
+                        rate_str = "-10%"
 
-                comm = Communicate(v_txt, v_code, rate=rate, pitch=pch)
-                await comm.save("gen_v.mp3")
-                st.audio("gen_v.mp3")
-            
-            asyncio.run(generate_voice())
-        else:
-            st.warning("စာသား အရင်ရိုက်ပါ။")
+                    comm = Communicate(v_input, v_code, rate=rate_str, pitch=pitch_str)
+                    await comm.save("nextgen_output.mp3")
+                    st.audio("nextgen_output.mp3")
+                    st.success("Audio synthesized successfully.")
+                
+                asyncio.run(build_voice())
+            else:
+                st.warning("Please enter text to synthesize.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# Footer
+st.markdown("<br><p style='text-align: center; color: #64748b;'>© 2026 TECH_T NEXTGEN AI. All Rights Reserved.</p>", unsafe_allow_html=True)
