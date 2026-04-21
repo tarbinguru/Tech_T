@@ -6,107 +6,155 @@ import asyncio
 from edge_tts import Communicate
 import os
 
-# --- 🚀 ULTRA-PREMIUM UI SETUP ---
-st.set_page_config(page_title="Tech_T", page_icon="⚡", layout="wide")
+# --- 🛠️ SYSTEM SETTINGS ---
+st.set_page_config(page_title="TECH_T | AI", layout="centered")
 
-# Custom CSS for Professional Look
+# --- 🎨 ADVANCED CSS DESIGN ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;700&display=swap');
+    /* Main Background */
+    .stApp { background-color: #0A0A0A; }
     
-    .main { background-color: #050505; }
+    /* Global Text Color */
+    html, body, [class*="css"], p, span { color: #FFFFFF !important; }
+
+    /* Title Styling */
+    .header-box {
+        text-align: center;
+        padding: 40px 10px;
+        background: linear-gradient(180deg, #111, #000);
+        border-radius: 25px;
+        border-bottom: 2px solid #00D1FF;
+        margin-bottom: 30px;
+    }
     
-    /* App Title with Neon Effect */
-    .app-name {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 60px;
-        font-weight: 900;
-        background: linear-gradient(90deg, #00F2FF, #007BFF);
+    .app-title {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 55px;
+        font-weight: 800;
+        background: linear-gradient(to right, #00D1FF, #007BFF);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-align: center;
-        margin-top: -20px;
+        margin-bottom: 0px;
+        letter-spacing: 2px;
     }
     
-    .dev-by {
-        color: #555;
-        text-align: center;
+    .dev-text {
+        font-size: 14px;
+        color: #888 !important;
+        text-transform: uppercase;
         letter-spacing: 5px;
-        font-size: 12px;
-        margin-bottom: 40px;
     }
-    
-    /* Glassmorphism Cards */
-    div[data-testid="stVerticalBlock"] > div:has(div.stButton) {
-        background: rgba(20, 20, 20, 0.8);
-        padding: 30px;
-        border-radius: 20px;
-        border: 1px solid #222;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    
-    /* Button Styling */
-    .stButton>button {
-        background: linear-gradient(45deg, #00F2FF, #007BFF) !important;
-        color: white !important;
-        border: none !important;
+
+    /* Input & Boxes Styling */
+    .stTextInput>div>div>input, .stSelectbox>div>div>div, .stTextArea>div>textarea {
+        background-color: #1A1A1A !important;
+        color: #FFFFFF !important;
+        border: 1px solid #333 !important;
         border-radius: 12px !important;
+    }
+
+    /* Action Button */
+    .stButton>button {
+        background: #00D1FF !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+        width: 100%;
         height: 50px;
-        font-weight: bold;
-        transition: 0.3s;
+        border-radius: 12px !important;
+        border: none !important;
+        font-size: 18px !important;
+        transition: 0.3s ease;
+    }
+    .stButton>button:hover {
+        background: #007BFF !important;
+        color: #FFFFFF !important;
+        transform: scale(1.02);
     }
     
-    /* Hide Error Message box red background */
-    .stAlert { border-radius: 15px; border: none; }
+    /* Result Box Styling */
+    .result-card {
+        background: #111111;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #222;
+        margin-top: 20px;
+    }
     </style>
     
-    <div class="app-name">TECH_T</div>
-    <div class="dev-by">DEVELOPED BY TARBIN</div>
+    <div class="header-box">
+        <h1 class="app-title">TECH_T</h1>
+        <p class="dev-text">Developed By Tarbin</p>
+    </div>
     """, unsafe_allow_html=True)
 
-# --- APP LOGIC ---
-tab1, tab2 = st.tabs(["🎥 AI VIDEO SCRIPT", "🎙️ PREMIUM VOICE"])
+# --- NAVIGATION ---
+tab1, tab2 = st.tabs(["[ 🎥 AI SCRIPT GENERATOR ]", "[ 🎙️ PREMIUM AI VOICE ]"])
 
+# --- TAB 1: SCRIPT GEN ---
 with tab1:
-    st.subheader("Link to Script (YouTube, FB, TikTok)")
-    link = st.text_input("Video URL ကို ဒီမှာထည့်ပါ", placeholder="https://...")
-    target_l = st.selectbox("ဘာသာစကားရွေးပါ", ["မြန်မာ", "English", "Thai"])
+    st.markdown("<br>", unsafe_allow_html=True)
+    v_url = st.text_input("🔗 Video Link (YouTube, TikTok, FB, etc.)", placeholder="Paste link here...")
     
-    if st.button("RUN TECH_T AI ✨"):
-        if link:
-            with st.spinner("AI စနစ်ဖြင့် အလုပ်လုပ်နေပါပြီ..."):
+    col1, col2 = st.columns(2)
+    with col1:
+        lang_choice = st.selectbox("Output Language", ["မြန်မာ", "English", "Thai"])
+    with col2:
+        st.info("💡 Link မှမရပါက Video ကိုဒေါင်း၍ Upload တင်ပါ။")
+
+    if st.button("RUN TECH_T ENGINE ✨"):
+        if v_url:
+            with st.status("⚙️ Tech_T AI Processing...", expanded=True) as status:
                 try:
-                    # အရင်ဖိုင်ဟောင်းရှိရင် ဖျက်မယ်
-                    if os.path.exists("t_audio.mp3"): os.remove("t_audio.mp3")
+                    audio_fn = "temp_audio.mp3"
+                    if os.path.exists(audio_fn): os.remove(audio_fn)
                     
+                    status.write("🌐 Connecting to Server...")
                     ydl_opts = {
                         'format': 'bestaudio/best',
-                        'outtmpl': 't_audio.%(ext)s',
+                        'outtmpl': 'temp_v',
                         'quiet': True,
                         'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192'}],
                     }
                     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                        ydl.download([link])
+                        ydl.download([v_url])
+                    os.rename("temp_v.mp3", audio_fn)
                     
+                    status.write("🧠 AI Transcribing...")
                     model = whisper.load_model("tiny")
-                    res = model.transcribe("t_audio.mp3")
+                    result = model.transcribe(audio_fn)
                     
-                    dest_lang = "my" if target_l == "မြန်မာ" else "en"
-                    translated = GoogleTranslator(source='auto', target=dest_lang).translate(res['text'])
+                    status.write("📝 Translating Content...")
+                    target = "my" if lang_choice == "မြန်မာ" else "en"
+                    final_txt = GoogleTranslator(source='auto', target=target).translate(result['text'])
                     
-                    st.success("အောင်မြင်စွာ ပြီးဆုံးပါပြီ")
-                    st.text_area("ရလဒ်", translated, height=300)
+                    status.update(label="Process Complete!", state="complete")
+                    st.markdown('<div class="result-card">', unsafe_allow_html=True)
+                    st.subheader("Results:")
+                    st.text_area("", final_txt, height=350)
+                    st.markdown('</div>', unsafe_allow_html=True)
                     
+                    if os.path.exists(audio_fn): os.remove(audio_fn)
                 except Exception as e:
-                    st.error("⚠️ Server က လင့်ကို ပိတ်ထားပါသည်။ ဗီဒီယိုကို ဖုန်းထဲဒေါင်းပြီး Upload လုပ်သည့် စနစ်ကို စမ်းသုံးကြည့်ပါ။")
+                    st.error(f"Error: YouTube မှ ဒေါင်းလုဒ်ဆွဲခြင်းကို ပိတ်ထားပါသည်။ အခြားလင့်ဖြင့်စမ်းပါ သို့မဟုတ် ဗီဒီယိုတင်ပေးပါ။")
+        else:
+            st.warning("လင့်တစ်ခုခု အရင်ထည့်ပေးပါဗျာ။")
 
+# --- TAB 2: VOICE GEN ---
 with tab2:
-    st.subheader("Text to Professional Voice")
-    v_text = st.text_area("စာသားများ ရိုက်ထည့်ပါ", height=150)
-    if st.button("GENERATE VOICE 🎧"):
-        if v_text:
-            async def run_v():
-                c = Communicate(v_text, "my-MM-ThihaNeural")
-                await c.save("v.mp3")
-                st.audio("v.mp3")
-            asyncio.run(run_v())
+    st.markdown("<br>", unsafe_allow_html=True)
+    v_input = st.text_area("Write Script for Voiceover", placeholder="မင်္ဂလာပါ...", height=200)
+    v_col1, v_col2 = st.columns(2)
+    with v_col1:
+        v_style = st.selectbox("Voice Style", ["Thiha (Male)", "Nilar (Female)"])
+    
+    if st.button("GENERATE AI AUDIO 🎧"):
+        if v_input:
+            async def generate():
+                v_code = "my-MM-ThihaNeural" if "Thiha" in v_style else "my-MM-NilarNeural"
+                comm = Communicate(v_input, v_code)
+                await comm.save("v_out.mp3")
+                st.audio("v_out.mp3")
+            asyncio.run(generate())
+        else:
+            st.warning("စာသား အရင်ရိုက်ပေးပါ။")
